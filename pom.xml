@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>name.ulbricht</groupId>
+    <artifactId>skat</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+    <name>Skat</name>
+    <description>Skat for Windows 7: one player against two computer players</description>
+    <inceptionYear>2026</inceptionYear>
+    <organization>
+        <name>Skat</name>
+    </organization>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.release>11</maven.compiler.release>
+        <main.class>name.ulbricht.skat.Launcher</main.class>
+
+        <javafx.version>11.0.2</javafx.version>
+        <junit.version>5.14.4</junit.version>
+        <checkstyle.version>14.3.0</checkstyle.version>
+        <spotbugs.version>4.10.5</spotbugs.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.16.0</version>
+                <configuration>
+                    <release>${maven.compiler.release}</release>
+                    <compilerArgs>
+                        <arg>-Xlint:all</arg>
+                        <arg>-Werror</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.6.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>${main.class}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.6.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <configLocation>config/checkstyle/checkstyle.xml</configLocation>
+                    <consoleOutput>true</consoleOutput>
+                    <violationSeverity>warning</violationSeverity>
+                    <failOnViolation>true</failOnViolation>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>checkstyle</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs.version}.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs</artifactId>
+                        <version>${spotbugs.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Medium</threshold>
+                    <excludeFilterFile>config/spotbugs/exclude.xml</excludeFilterFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>spotbugs</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+                    <mainClass>${main.class}</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!--
+            The package for Windows 7: mvnw.cmd -P windows package
+            Builds target/dist/Skat (Skat.exe, lib/skat.jar, a 32-bit Java 11 runtime with JavaFX made
+            by jlink) and zips it to target/Skat-<version>.zip. Needs a 32-bit JDK 11 that includes
+            JavaFX, e.g. Liberica JDK 11 Full for Windows x86; set its folder with -Djdk.x86=...
+        -->
+        <profile>
+            <id>windows</id>
+            <properties>
+                <jdk.x86>${project.basedir}/.tools/jdk-x86/jdk-11.0.20.1-full</jdk.x86>
+                <dist.dir>${project.build.directory}/dist/Skat</dist.dir>
+                <runtime.modules>java.base,java.desktop,javafx.controls,jdk.unsupported,jdk.localedata</runtime.modules>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                        <artifactId>launch4j-maven-plugin</artifactId>
+                        <version>2.7.0</version>
+                        <executions>
+                            <execution>
+                                <id>exe</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>launch4j</goal>
+                                </goals>
+                                <configuration>
+                                    <headerType>gui</headerType>
+                                    <outfile>${dist.dir}/Skat.exe</outfile>
+                                    <dontWrapJar>true</dontWrapJar>
+                                    <jar>lib/skat.jar</jar>
+                                    <icon>${project.basedir}/src/packaging/skat.ico</icon>
+                                    <errTitle>Skat</errTitle>
+                                    <chdir>.</chdir>
+                                    <classPath>
+                                        <mainClass>${main.class}</mainClass>
+                                        <addDependencies>false</addDependencies>
+                                    </classPath>
+                                    <jre>
+                                        <path>runtime</path>
+                                        <requiresJdk>false</requiresJdk>
+                                        <requires64Bit>false</requires64Bit>
+                                    </jre>
+                                    <singleInstance>
+                                        <mutexName>name.ulbricht.skat.Skat</mutexName>
+                                        <windowTitle>Skat</windowTitle>
+                                    </singleInstance>
+                                    <messages>
+                                        <startupErr>Skat konnte nicht gestartet werden.</startupErr>
+                                        <jreNotFoundErr>Skat kann nicht starten: Der Ordner runtime fehlt.</jreNotFoundErr>
+                                        <launcherErr>Skat konnte nicht gestartet werden.</launcherErr>
+                                    </messages>
+                                    <versionInfo>
+                                        <fileVersion>1.0.0.0</fileVersion>
+                                        <txtFileVersion>${project.version}</txtFileVersion>
+                                        <fileDescription>Skat</fileDescription>
+                                        <companyName>Skat</companyName>
+                                        <!-- Set on purpose: without it Launch4j writes its own copyright line. -->
+                                        <copyright>Skat</copyright>
+                                        <productVersion>1.0.0.0</productVersion>
+                                        <txtProductVersion>${project.version}</txtProductVersion>
+                                        <productName>Skat</productName>
+                                        <internalName>Skat</internalName>
+                                        <originalFilename>Skat.exe</originalFilename>
+                                    </versionInfo>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>runtime</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <delete dir="${project.build.directory}/dist"/>
+                                        <exec executable="${jdk.x86}/bin/jlink.exe" failonerror="true">
+                                            <arg value="--add-modules"/>
+                                            <arg value="${runtime.modules}"/>
+                                            <arg value="--include-locales=de,en"/>
+                                            <arg value="--strip-debug"/>
+                                            <arg value="--no-header-files"/>
+                                            <arg value="--no-man-pages"/>
+                                            <arg value="--compress=2"/>
+                                            <arg value="--output"/>
+                                            <arg value="${dist.dir}/runtime"/>
+                                        </exec>
+                                        <!-- Instructions for the player, in German like the whole user interface. -->
+                                        <copy file="${project.basedir}/src/packaging/readme-player.txt"
+                                              tofile="${dist.dir}/Liesmich.txt" encoding="UTF-8" outputencoding="windows-1252"/>
+                                        <!-- Notepad on Windows 7 only understands CRLF line ends. -->
+                                        <fixcrlf srcdir="${dist.dir}" includes="Liesmich.txt" eol="crlf"
+                                                 encoding="windows-1252"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>zip</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <copy file="${project.build.directory}/${project.build.finalName}.jar"
+                                              tofile="${dist.dir}/lib/skat.jar"/>
+                                        <zip destfile="${project.build.directory}/Skat-${project.version}.zip"
+                                             basedir="${project.build.directory}/dist" includes="Skat/**"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

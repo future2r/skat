@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skat main window draft</title>
+<style>
+  body { margin: 0; background: #e9e6df; color: #222; font-family: Arial, sans-serif; }
+  .page { max-width: 1060px; margin: 0 auto; padding: 16px; }
+  .switch { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
+  .switch button { font: 15px Arial, sans-serif; padding: 7px 14px; border: 1px solid #888; border-radius: 8px; background: #fff; cursor: pointer; }
+  .switch button.on { background: #1e6b3c; color: #fff; border-color: #1e6b3c; }
+  .note { font-size: 14px; color: #555; margin: 0 0 12px; min-height: 20px; }
+  .scaler { width: 1024px; height: 768px; transform-origin: top left; }
+  .holder { overflow: hidden; }
+
+  #win { position: relative; width: 1024px; height: 768px; background: #1e6b3c; overflow: hidden; box-shadow: 0 4px 18px rgba(0,0,0,.35); font-family: Arial, sans-serif; user-select: none; }
+  .abs { position: absolute; }
+  .title { left: 0; right: 0; top: 0; height: 30px; background: #c9dcf2; border-bottom: 1px solid #8aa6c8; display: flex; align-items: center; padding: 0 0 0 10px; font-size: 14px; color: #12304f; gap: 8px; }
+  .title .wb { margin-left: auto; display: flex; height: 100%; }
+  .title .wb span { width: 44px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+  .title .wb span.x { background: #c84031; color: #fff; }
+  .top { left: 0; right: 0; top: 30px; height: 46px; background: #0e3b1f; color: #fff; display: flex; align-items: center; gap: 22px; padding: 0 12px 0 16px; font-size: 17px; }
+  .top .game { display: flex; align-items: center; gap: 8px; font-size: 19px; font-weight: 700; }
+  .pill { background: #ffc400; color: #3d2e00; border-radius: 16px; padding: 4px 12px; font-weight: 700; }
+  .tbtn { display: flex; align-items: center; gap: 6px; background: #fff; color: #222; border: 2px solid #8a8a8a; border-radius: 8px; padding: 5px 12px; font-size: 16px; }
+  .opp { top: 92px; color: #fff; }
+  .who { display: flex; align-items: center; gap: 12px; }
+  .av { width: 54px; height: 54px; border-radius: 50%; background: #f0d9a8; color: #5a3d10; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 700; border: 3px solid #fff; }
+  .name { font-size: 21px; font-weight: 700; }
+  .role { font-size: 15px; color: #cfe8d6; }
+  .fan { display: flex; margin-top: 10px; }
+  .back { flex: none; width: 44px; height: 66px; border-radius: 6px; border: 3px solid #fff; box-sizing: border-box; background: #2d4f96 repeating-linear-gradient(45deg, #2d4f96 0 5px, #3a63b5 5px 10px); box-shadow: 0 1px 2px rgba(0,0,0,.4); }
+  .bubble { background: #fff; color: #222; border-radius: 16px; padding: 8px 16px; font-size: 22px; font-weight: 700; }
+  .bubble.m { background: #d9e8dd; color: #44614c; font-size: 16px; font-weight: 400; }
+  .lbl { color: #fff; font-size: 16px; text-align: center; }
+  .slot { box-sizing: border-box; border: 3px dashed rgba(255,255,255,.75); border-radius: 10px; color: #fff; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 17px; }
+  .c { position: relative; flex: none; border-radius: 9px; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.45); transition: transform .15s; }
+  .c svg { display: block; width: 100%; height: 100%; }
+  .c.up { transform: translateY(-18px); outline: 5px solid #ffc400; cursor: pointer; }
+  .c.dim { filter: brightness(.55) saturate(.6); }
+  .c.sel { transform: translateY(-26px); outline: 5px solid #2f7de1; }
+  .hand { left: 0; right: 0; bottom: 120px; display: flex; justify-content: center; align-items: flex-end; gap: 22px; }
+  .grp { display: flex; flex-direction: column; align-items: center; }
+  .glabel { background: #fff; color: #222; font-size: 15px; border-radius: 12px; padding: 2px 14px; margin-bottom: 26px; white-space: nowrap; }
+  .gcards { display: flex; gap: 6px; }
+  .hint { left: 0; right: 0; bottom: 0; height: 110px; background: #fff6cc; border-top: 4px solid #e0b000; box-sizing: border-box; padding: 12px 16px; color: #3d3000; }
+  .htext { display: flex; align-items: center; gap: 10px; font-size: 20px; line-height: 1.3; }
+  .htext i { font-style: normal; display: inline-flex; width: 28px; height: 28px; border-radius: 50%; background: #e0b000; color: #fff; align-items: center; justify-content: center; font-weight: 700; flex: none; }
+  .hbtns { display: flex; gap: 10px; margin-top: 12px; }
+  .b { display: inline-flex; align-items: center; gap: 7px; background: #fff; color: #222; border: 2px solid #777; border-radius: 9px; padding: 6px 16px; font-size: 18px; white-space: nowrap; cursor: pointer; }
+  .b.go { background: #2e7d32; color: #fff; border-color: #1f5a23; font-weight: 700; }
+  .b.no { background: #c0392b; color: #fff; border-color: #8e271c; font-weight: 700; }
+  .b.big { font-size: 22px; padding: 10px 26px; }
+  .panel { background: #fff; border: 3px solid #333; border-radius: 14px; box-shadow: 0 6px 20px rgba(0,0,0,.4); color: #222; box-sizing: border-box; }
+  .help { background: #fff6cc; border: 1px solid #e0b000; border-radius: 9px; padding: 9px 12px; font-size: 16px; color: #3d3000; display: flex; gap: 10px; align-items: center; text-align: left; }
+  .gbtn { box-sizing: border-box; width: 150px; height: 82px; border: 3px solid #555; border-radius: 12px; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; }
+  .gbtn.off { border-color: #c4c4c4; background: #efefef; color: #8a8a8a; }
+  .gbtn .gn { display: flex; align-items: center; gap: 8px; font-size: 21px; font-weight: 700; }
+  .gbtn .gv { font-size: 15px; color: #2d5a2d; }
+  .gbtn.off .gv { color: #a33; }
+  .menu { width: 250px; background: #fff; border: 2px solid #555; border-radius: 10px; box-shadow: 0 6px 18px rgba(0,0,0,.4); padding: 6px 0; font-size: 18px; color: #222; }
+  .menu div { padding: 10px 18px; }
+  .menu div.hl { background: #e4eefb; }
+  .menu hr { border: 0; border-top: 1px solid #ccc; margin: 4px 0; }
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="note"><b>Original draft</b> from the planning, before the implementation. The program differs in
+    details (top bar „Du und Ludwig gegen Richard“, settings instead of a card size, no score
+    sheet). The program and the images of the ScreenshotTool are authoritative. The window texts are German like the program.</p>
+  <div class="switch" id="switch"></div>
+  <p class="note" id="note"></p>
+  <div class="holder" id="holder"><div class="scaler" id="scaler"><div id="win"></div></div></div>
+</div>
+<script>
+const SV = {
+  e: '<path d="M12 4V1" stroke="#5b3a1a" stroke-width="2"/><ellipse cx="12" cy="14.5" rx="6" ry="7.5" fill="#c98b3c"/><path d="M4.5 11.5C4.5 6.5 8 4 12 4s7.5 2.5 7.5 7.5z" fill="#5b3a1a"/>',
+  g: '<path d="M12 1.5C19 6.5 20.5 13 12 21.5 3.5 13 5 6.5 12 1.5z" fill="#2e8b3a"/><path d="M12 5v18M12 10l-4-2.5M12 10l4-2.5M12 14.5l-4.5-2.5M12 14.5l4.5-2.5" stroke="#145a1f" stroke-width="1.2" fill="none"/>',
+  r: '<path d="M12 21.5C5 16 2 12.5 2 8.5 2 5.4 4.4 3 7.3 3c2 0 3.7 1.1 4.7 2.8C13 4.1 14.7 3 16.7 3 19.6 3 22 5.4 22 8.5c0 4-3 7.5-10 13z" fill="#d0021b"/>',
+  s: '<circle cx="12" cy="3" r="1.6" fill="none" stroke="#8a5a00" stroke-width="1.2"/><circle cx="12" cy="13" r="8.8" fill="#f0b323" stroke="#8a5a00" stroke-width="1"/><path d="M3.4 11h17.2" stroke="#8a5a00" stroke-width="2"/><circle cx="12" cy="16.5" r="1.8" fill="#5a3a00"/><path d="M12 18v3.6" stroke="#5a3a00" stroke-width="1.6"/>'
+};
+const COL = { e: '#5b3a1a', g: '#1f7a2e', r: '#c8102e', s: '#a36a00' };
+const BODY = { e: '#7a4b22', g: '#2e7d3a', r: '#c8102e', s: '#d99a1a' };
+const NAME = { e: 'Eichel', g: 'Grün', r: 'Rot', s: 'Schellen' };
+let uid = 0;
+const sym = (s, x, y, size) => `<svg x="${x}" y="${y}" width="${size}" height="${size}" viewBox="0 0 24 24">${SV[s]}</svg>`;
+const symH = (s, size) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" style="display:block;flex:none">${SV[s]}</svg>`;
+
+function figure(s, r) {
+  let hat;
+  if (r === 'K') hat = '<path d="M80 70 L80 52 L90 62 L100 48 L110 62 L120 52 L120 70 Z" fill="#f0b323" stroke="#8a5a00" stroke-width="2"/>';
+  else if (r === 'O') hat = '<rect x="84" y="50" width="32" height="16" rx="3" fill="#333"/><rect x="76" y="64" width="48" height="5" rx="2" fill="#333"/><path d="M114 52 q16 -14 22 4" stroke="#c8102e" stroke-width="4" fill="none"/>';
+  else hat = '<ellipse cx="100" cy="66" rx="24" ry="8" fill="#333"/><circle cx="100" cy="60" r="5" fill="#c8102e"/>';
+  const pipY = r === 'U' ? 104 : 44;
+  return `<path d="M58 150 Q58 108 100 104 Q142 108 142 150 Z" fill="${BODY[s]}" stroke="#222" stroke-width="2"/>
+    <path d="M88 105 L100 124 L112 105 Z" fill="#fff" stroke="#222" stroke-width="1.5"/>
+    <circle cx="100" cy="86" r="17" fill="#f2d0a9" stroke="#222" stroke-width="2"/>
+    <circle cx="94" cy="84" r="2" fill="#222"/><circle cx="106" cy="84" r="2" fill="#222"/>
+    <path d="M94 93 q6 4 12 0" stroke="#222" stroke-width="1.5" fill="none"/>${hat}${sym(s, 44, pipY, 30)}`;
+}
+const PIPS = {
+  7: [[44, 50], [122, 50], [44, 128], [122, 128], [44, 206], [122, 206], [83, 89]],
+  8: [[44, 50], [122, 50], [44, 128], [122, 128], [44, 206], [122, 206], [83, 89], [83, 167]],
+  9: [[44, 46], [122, 46], [44, 100], [122, 100], [44, 154], [122, 154], [44, 208], [122, 208], [83, 127]],
+  10: [[44, 46], [122, 46], [44, 100], [122, 100], [44, 154], [122, 154], [44, 208], [122, 208], [83, 73], [83, 181]]
+};
+function cardSvg(r, s) {
+  const fs = r === '10' ? 31 : 38;
+  const idx = `<text x="23" y="44" font-size="${fs}" font-weight="700" fill="${COL[s]}" text-anchor="middle" font-family="Arial">${r}</text>${sym(s, 9, 50, 28)}`;
+  let mid;
+  if (r === 'A') mid = sym(s, 55, 50, 90) + sym(s, 55, 160, 90);
+  else if (PIPS[r]) mid = PIPS[r].map(([x, y]) => sym(s, x, y, 34)).join('');
+  else {
+    const id = 'cl' + (uid++);
+    mid = `<rect x="44" y="34" width="112" height="232" rx="6" fill="#faf6ec" stroke="${COL[s]}" stroke-width="2.5"/>
+      <clipPath id="${id}"><rect x="46" y="36" width="108" height="228" rx="5"/></clipPath>
+      <g clip-path="url(#${id})">${figure(s, r)}<g transform="rotate(180 100 150)">${figure(s, r)}</g></g>
+      <line x1="44" y1="150" x2="156" y2="150" stroke="${COL[s]}" stroke-width="2"/>`;
+  }
+  return `<svg viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="198" height="298" rx="14" fill="#fff" stroke="#999" stroke-width="2"/>${mid}<g>${idx}</g><g transform="rotate(180 100 150)">${idx}</g></svg>`;
+}
+function card(id, w, cls) {
+  const s = id.slice(-1), r = id.slice(0, -1);
+  return `<div class="c ${cls || ''}" style="width:${w}px;height:${Math.round(w * 1.5)}px">${cardSvg(r, s)}</div>`;
+}
+const A = (st, html, cls) => `<div class="abs ${cls || ''}" style="${st}">${html}</div>`;
+const backs = n => `<div class="fan">${Array.from({ length: n }, (_, i) => `<div class="back" style="margin-left:${i ? -30 : 0}px"></div>`).join('')}</div>`;
+function hand(groups, w, mode) {
+  return A('', groups.map(([label, ids]) => `<div class="grp"><div class="glabel">${label}</div><div class="gcards">${ids.map(id => card(id, w, mode ? mode(id) : '')).join('')}</div></div>`).join(''), 'hand');
+}
+function opp(side, name, role, n, bubble) {
+  const who = `<div class="who" style="${side === 'right' ? 'flex-direction:row-reverse;text-align:right' : ''}"><div class="av">${name[0]}</div><div><div class="name">${name}</div><div class="role">${role}</div></div>${bubble || ''}</div>`;
+  return A(`${side}:24px`, who + `<div style="display:flex;${side === 'right' ? 'justify-content:flex-end' : ''}">${n ? backs(n) : ''}</div>`, 'opp');
+}
+const title = A('', '<span style="display:inline-flex">' + symH('e', 16) + '</span>Skat<div class="wb"><span>&#8211;</span><span>&#9633;</span><span class="x">&#10005;</span></div>', 'title');
+function topbar(left, points) {
+  return A('', `${left}<div style="margin-left:auto;display:flex;align-items:center;gap:10px">${points ? `<span class="pill">${points}</span>` : ''}<span class="tbtn">&#128264; Ton</span><span class="tbtn">&#9776; Menü</span></div>`, 'top');
+}
+const gameTitle = (s, t) => `<span class="game">${symH(s, 24)}${t}</span>`;
+function hint(text, btns) {
+  return A('', `<div class="htext"><i>i</i><span>${text}</span></div><div class="hbtns">${btns}</div>`, 'hint');
+}
+const B = (t, cls, ic) => `<span class="b ${cls || ''}">${ic ? ic + ' ' : ''}${t}</span>`;
+const bTip = B('Tipp', '', '&#128161;'), bWhy = B('Warum?', '', '?'), bLast = B('Letzter Stich', '', '&#8630;'), bUndo = B('Zurücknehmen', '', '&#8617;');
+const red = t => `<span style="color:#c8102e;font-weight:700">${t}</span>`;
+
+const H10 = ['Ue', 'Ur', 'Ag', '10g', 'Kg', 'Ar', '9r', '7r', 'Os', '8s'];
+const PLAY_GROUPS = [['Trumpf: Unter und Grün', ['Ue', 'Ur', 'Ag', '10g', 'Kg']], ['Rot', ['Ar', '9r', '7r']], ['Schellen', ['Os', '8s']]];
+const DEFAULT_GROUPS = [['Unter', ['Ue', 'Ur']], ['Grün', ['Ag', '10g', 'Kg']], ['Rot', ['Ar', '9r', '7r']], ['Schellen', ['Os', '8s']]];
+const PLAYABLE = ['Ar', '9r', '7r'];
+
+function trickArea(leftCard, rightCard, mine, labelMine) {
+  return A('left:352px;top:176px;width:100px', '<div class="lbl">Ludwig</div>' + (leftCard ? card(leftCard, 100) : ''))
+    + A('left:572px;top:176px;width:100px', '<div class="lbl">Richard</div>' + (rightCard ? card(rightCard, 100) : ''))
+    + A('left:462px;top:272px;width:100px', mine ? card(mine, 100) : `<div class="slot" style="width:100px;height:150px">${labelMine || 'Deine<br>Karte'}</div>`);
+}
+const playTop = (trick, points) => topbar(gameTitle('g', 'Grün-Spiel') + `<span>Alleinspieler: Du</span><span>Gereizt: 22</span><span>Stich ${trick} von 10</span>`, points);
+
+const STATES = [
+  { k: 'bidding', n: '1. Bidding', d: 'The player is rearhand (dealer). Ludwig passed, Richard said 20. The question appears in the middle of the table; the own cards stay visible.',
+    f: () => topbar('<span class="game">Reizen</span><span>Geber: Du</span><span>Du bist Hinterhand</span>')
+      + opp('left', 'Ludwig', 'Vorhand · 10 Karten', 10, '<div class="bubble m">Passe</div>')
+      + opp('right', 'Richard', 'Mittelhand · 10 Karten', 10, '<div class="bubble">20</div>')
+      + A('left:452px;top:92px;text-align:center', '<div class="lbl" style="margin-bottom:4px">Skat</div><div style="display:flex;gap:8px"><div class="back" style="width:54px;height:80px"></div><div class="back" style="width:54px;height:80px"></div></div>')
+      + A('left:262px;top:200px;width:500px;padding:18px 22px;text-align:center', '<div style="font-size:21px">Richard hat <b style="font-size:30px">20</b> gesagt.</div><div style="font-size:26px;font-weight:700;margin:8px 0 16px">Sagst du 22?</div><div style="display:flex;gap:18px;justify-content:center">' + B('22 sagen', 'go big', '&#10004;') + B('Passe', 'no big', '&#10006;') + '</div><div class="help" style="margin-top:16px"><span style="font-size:22px">&#128161;</span><span>Reiz-Hilfe: Deine Karten reichen bis <b>22</b>.<br>Mit 1 (Eichel-Unter), Spiel 2 × Grün 11 = 22.</span></div>', 'panel')
+      + hand(DEFAULT_GROUPS, 86)
+      + hint('Richard hat 20 gesagt. Mit „22 sagen“ bietest du mehr, mit „Passe“ steigst du aus.', bTip + bWhy) },
+  { k: 'skat', n: '2. Skat and discarding', d: 'Bidding won, skat taken up (12 cards). Click two cards, they are marked blue, then discard them.',
+    f: () => topbar('<span class="game">Skat aufgenommen</span><span>Alleinspieler: Du</span><span>Gereizt: 22</span>')
+      + opp('left', 'Ludwig', 'Gegenspieler · 10 Karten', 10) + opp('right', 'Richard', 'Gegenspieler · 10 Karten', 10)
+      + A('left:392px;top:170px;text-align:center', '<div class="lbl" style="margin-bottom:6px">Skat (2 Karten hineinlegen)</div><div style="display:flex;gap:40px;justify-content:center"><div class="slot" style="width:100px;height:150px">1</div><div class="slot" style="width:100px;height:150px">2</div></div>')
+      + hand([['Unter', ['Ue', 'Ur']], ['Eichel', ['Ke']], ['Grün', ['Ag', '10g', 'Kg']], ['Rot', ['Ar', '9r', '7r']], ['Schellen', ['10s', 'Os', '8s']]], 70, id => (id === 'Ke' || id === '10s') ? 'sel' : '')
+      + hint('Ausgewählt: Eichel-König und Schellen-Zehn. Zusammen 14 Augen, die zählen am Ende für dich.', B('Diese 2 Karten drücken', 'go', '&#10004;') + B('Auswahl aufheben') + bTip + bWhy) },
+  { k: 'announcement', n: '3. Announcement', d: 'Big buttons with the game value. Greyed out: the bid of 22 is not reached. Rare announcements are behind „Weitere Ansagen …“.',
+    f: () => topbar('<span class="game">Spiel ansagen</span><span>Alleinspieler: Du</span><span>Gereizt: 22</span>', 'Deine Augen: 14 (Skat)')
+      + opp('left', 'Ludwig', 'Gegenspieler · 10 Karten', 10) + opp('right', 'Richard', 'Gegenspieler · 10 Karten', 10)
+      + A('left:257px;top:150px;width:510px;padding:16px 18px', `<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:22px;font-weight:700">Welches Spiel möchtest du spielen?</span><span style="font-size:16px;color:#555">Gereizt: 22</span></div>
+        <div style="display:grid;grid-template-columns:repeat(3,150px);gap:12px;justify-content:center;margin:14px 0">
+          ${[['e', 'Eichel', '24 Punkte', 1], ['g', 'Grün', '22 Punkte', 1], ['r', 'Rot', '20 – reicht nicht', 0], ['s', 'Schellen', '18 – reicht nicht', 0], ['G', 'Grand', '48 Punkte', 1], ['N', 'Null', '23 Punkte', 1]].map(([s, n, v, ok]) => `<div class="gbtn ${ok ? '' : 'off'}"><div class="gn">${s === 'G' ? '<div style="display:grid;grid-template-columns:15px 15px;gap:1px">' + ['e', 'g', 'r', 's'].map(x => symH(x, 15)).join('') + '</div>' : s === 'N' ? '<span style="display:inline-flex;width:28px;height:28px;border:3px solid #444;border-radius:50%;align-items:center;justify-content:center;font-size:17px">0</span>' : symH(s, 30)}${n}</div><div class="gv">${v}</div></div>`).join('')}
+        </div><div style="display:flex;justify-content:space-between">${B('Weitere Ansagen …', '', '&#8230;')}${bTip}</div>`, 'panel')
+      + hand(DEFAULT_GROUPS, 86)
+      + hint('Wähle dein Spiel. Bei Grün sind alle Unter und alle grünen Karten Trumpf.', bTip + bWhy) },
+  { k: 'playing', n: '4. Playing', d: 'Main view while playing: the player must follow hearts. Playable cards are raised with a yellow frame, the others are dimmed and cannot be clicked.',
+    f: () => playTop(1, 'Deine Augen: 14 · Gegner: 0')
+      + opp('left', 'Ludwig', 'Gegenspieler · 9 Karten', 9) + opp('right', 'Richard', 'Gegenspieler · 9 Karten', 9)
+      + trickArea('Kr', '8r')
+      + hand(PLAY_GROUPS, 86, id => PLAYABLE.includes(id) ? 'up' : 'dim')
+      + hint(`Du bist dran. Du musst ${red('Rot')} zugeben. Der Rot-Unter ist Trumpf und zählt nicht als Rot.`, bTip + bWhy + bLast + bUndo) },
+  { k: 'trick', n: '5. Trick complete', d: 'The trick stays on the table until „Weiter“ is clicked. Until then the own card can be taken back.',
+    f: () => playTop(1, 'Deine Augen: 29 · Gegner: 0')
+      + opp('left', 'Ludwig', 'Gegenspieler · 9 Karten', 9) + opp('right', 'Richard', 'Gegenspieler · 9 Karten', 9)
+      + trickArea('Kr', '8r', 'Ar')
+      + A('left:392px;top:430px;width:240px;text-align:center;color:#ffe680;font-size:19px;font-weight:700', 'Dein Stich!')
+      + hand([['Trumpf: Unter und Grün', ['Ue', 'Ur', 'Ag', '10g', 'Kg']], ['Rot', ['9r', '7r']], ['Schellen', ['Os', '8s']]], 86)
+      + hint('Du bekommst den Stich: König 4 + Acht 0 + Ass 11 = 15 Augen.', B('Weiter', 'go', '&#10148;') + bUndo) },
+  { k: 'end', n: '6. End of game', d: 'The result in plain words with the calculation, only for the game just played.',
+    f: () => topbar(gameTitle('g', 'Grün-Spiel') + '<span>Alleinspieler: Du</span><span>Gereizt: 22</span><span>Spiel beendet</span>', 'Deine Augen: 78 · Gegner: 42')
+      + opp('left', 'Ludwig', 'Gegenspieler', 0) + opp('right', 'Richard', 'Gegenspieler', 0)
+      + A('left:242px;top:150px;width:540px;padding:20px 24px;text-align:center', `<div style="font-size:36px;font-weight:700;color:#2e7d32">Gewonnen!</div>
+        <div style="font-size:20px;margin:8px 0 4px">Grün-Spiel: mit 1, Spiel 2 × Grün 11 = <b>22 Punkte</b></div>
+        <div style="font-size:18px;color:#444;margin-bottom:14px">Deine Augen: 78 · Gegner: 42 (61 waren nötig)</div>
+        <div style="display:flex;gap:14px;justify-content:center;margin-top:18px">${B('Nächstes Spiel', 'go big', '&#10148;')}${B('Alle Stiche ansehen')}</div>`, 'panel')
+      + hint('Das Spiel ist vorbei. Klicke auf „Nächstes Spiel“, dann gibt Ludwig die Karten.', '') },
+  { k: 'menu', n: '7. Menu open', d: 'Everything not needed all the time is in the menu at the top right.',
+    f: () => STATES.find(x => x.k === 'playing').f()
+      + A('right:12px;top:72px', '<div class="hl">Neues Spiel</div><div>Letzten Stich ansehen</div><hr><div>Einstellungen …<br><span style="font-size:14px;color:#666">Spielstärke, Ton, Kartengröße</span></div><div>Spielregeln</div><hr><div>Beenden</div>', 'menu') }
+];
+
+const sw = document.getElementById('switch');
+sw.innerHTML = STATES.map(s => `<button data-k="${s.k}">${s.n}</button>`).join('');
+function show(k) {
+  const s = STATES.find(x => x.k === k);
+  document.getElementById('win').innerHTML = title + s.f();
+  document.getElementById('note').textContent = s.d;
+  sw.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.k === k));
+}
+sw.addEventListener('click', e => { const b = e.target.closest('button'); if (b) show(b.dataset.k); });
+function fit() {
+  const w = document.getElementById('holder').clientWidth, sc = Math.min(1, w / 1024);
+  document.getElementById('scaler').style.transform = `scale(${sc})`;
+  document.getElementById('holder').style.height = Math.round(768 * sc) + 'px';
+}
+new ResizeObserver(fit).observe(document.getElementById('holder'));
+show('playing'); fit();
+</script>
+</body>
+</html>

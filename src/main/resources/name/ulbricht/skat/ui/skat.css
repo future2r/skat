@@ -1,0 +1,440 @@
+/* Look of the Skat table; sizes are in design pixels of the 1024 x 738 table, see TableScreen. */
+
+.root {
+    -fx-font-family: "Arial";
+}
+
+/* Around the table, where a window wider or narrower than the table shows: dark wood */
+.viewport {
+    -fx-background-color: #241307;
+}
+
+/* Green felt, lighter in the middle as if lit from above, in a wooden frame */
+.table {
+    -fx-background-color: radial-gradient(center 50% 42%, radius 70%, #2f9658 0%, #1d6b3c 55%, #124726 100%);
+    -fx-border-color: #3e230f, linear-gradient(to bottom, #7a4a25, #5a3418, #7a4a25), #3e230f;
+    -fx-border-width: 2, 11, 2;
+    -fx-border-insets: 0, 2, 13;
+}
+
+/* Top bar: dark wood */
+.top-bar {
+    -fx-background-color: linear-gradient(to bottom, #4a2c16, #2e1a0b);
+    -fx-padding: 0 16 0 16;
+    -fx-spacing: 16;
+    -fx-alignment: center-left;
+}
+
+.top-bar .label {
+    -fx-text-fill: #f6e7cf;
+    -fx-font-size: 16px;
+}
+
+.top-bar .title {
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+}
+
+.top-bar .pill {
+    -fx-background-color: #e9c46a;
+    -fx-background-radius: 16;
+    -fx-padding: 4 12 4 12;
+    -fx-text-fill: #3d2e00;
+    -fx-font-weight: bold;
+}
+
+/* Opponents: drawn portraits in a cream frame */
+.avatar {
+    -fx-background-color: #f0d9a8;
+    -fx-background-radius: 27;
+    -fx-border-color: #e9d3a8;
+    -fx-border-width: 3;
+    -fx-border-radius: 27;
+    -fx-min-width: 54;
+    -fx-min-height: 54;
+    -fx-max-width: 54;
+    -fx-max-height: 54;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.45), 8, 0, 0, 2);
+}
+
+.opp-name {
+    -fx-text-fill: white;
+    -fx-font-size: 21px;
+    -fx-font-weight: bold;
+}
+
+/* Team labels next to the names */
+.team-badge {
+    -fx-background-radius: 10;
+    -fx-padding: 2 10 2 10;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.team-badge.declarer {
+    -fx-background-color: #c0392b;
+}
+
+.team-badge.partner {
+    -fx-background-color: #2f7de1;
+}
+
+.team-badge.opponent {
+    -fx-background-color: #5a5a5a;
+}
+
+/* The player on turn: yellow ring and yellow name */
+.avatar.active {
+    -fx-border-color: #ffc400;
+    -fx-border-width: 5;
+    -fx-effect: dropshadow(gaussian, #ffc400, 16, 0.5, 0, 0);
+}
+
+.opp-name.active {
+    -fx-text-fill: #ffe066;
+}
+
+.opp-role {
+    -fx-text-fill: #cfe8d6;
+    -fx-font-size: 15px;
+}
+
+.bubble {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-padding: 8 16 8 16;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #222222;
+}
+
+/* Table */
+.table-label {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+}
+
+.slot {
+    -fx-border-color: rgba(255, 255, 255, 0.75);
+    -fx-border-style: dashed;
+    -fx-border-width: 3;
+    -fx-border-radius: 10;
+}
+
+.slot .label {
+    -fx-text-fill: white;
+    -fx-font-size: 17px;
+    -fx-text-alignment: center;
+}
+
+.slot.active {
+    -fx-border-color: #ffc400;
+    -fx-border-width: 4;
+}
+
+.slot.active .label {
+    -fx-text-fill: #ffe066;
+    -fx-font-weight: bold;
+}
+
+.group-label {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-padding: 2 14 2 14;
+    -fx-font-size: 15px;
+    -fx-text-fill: #222222;
+}
+
+.clickable {
+    -fx-cursor: hand;
+}
+
+/* Hint bar */
+/* Hint bar: cream paper below a wooden edge */
+.hint-bar {
+    -fx-background-color: #f7ecd2;
+    -fx-border-color: #6b3f1f;
+    -fx-border-width: 4 0 0 0;
+    -fx-padding: 10 16 10 16;
+}
+
+.hint-bar .button {
+    -fx-padding: 4 14 4 14;
+    -fx-border-color: #8a6a4a;
+}
+
+.hint-text {
+    -fx-font-size: 20px;
+    -fx-text-fill: #3e230f;
+}
+
+.hint-icon {
+    -fx-background-color: #6b3f1f;
+    -fx-background-radius: 14;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-min-width: 28;
+    -fx-min-height: 28;
+    -fx-max-width: 28;
+    -fx-max-height: 28;
+    -fx-alignment: center;
+}
+
+.help-icon {
+    -fx-background-color: #e0b000;
+    -fx-background-radius: 14;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-min-width: 28;
+    -fx-min-height: 28;
+    -fx-max-width: 28;
+    -fx-max-height: 28;
+    -fx-alignment: center;
+}
+
+/* Buttons */
+.button {
+    -fx-font-size: 18px;
+    -fx-background-color: white;
+    -fx-border-color: #777777;
+    -fx-border-width: 2;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+    -fx-padding: 6 16 6 16;
+    -fx-text-fill: #222222;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #eef3fb;
+}
+
+.button.go {
+    -fx-background-color: #2e7d32;
+    -fx-border-color: #1f5a23;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.button.go:hover {
+    -fx-background-color: #388e3c;
+}
+
+.button.no {
+    -fx-background-color: #c0392b;
+    -fx-border-color: #8e271c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.button.no:hover {
+    -fx-background-color: #d14536;
+}
+
+.button.big {
+    -fx-font-size: 22px;
+    -fx-padding: 10 26 10 26;
+}
+
+.button:disabled {
+    -fx-opacity: 0.45;
+}
+
+/* The button a tip suggests: thick yellow frame and a glow */
+.button.tip {
+    -fx-border-color: #ffc400;
+    -fx-border-width: 5;
+    -fx-effect: dropshadow(gaussian, #ffe066, 22, 0.6, 0, 0);
+}
+
+.top-bar .top-button {
+    -fx-font-size: 16px;
+    -fx-padding: 4 14 4 14;
+    -fx-background-color: #f6e7cf;
+    -fx-border-color: #c9a87a;
+    -fx-text-fill: #3e230f;
+}
+
+.top-bar .top-button:hover {
+    -fx-background-color: #fff3df;
+}
+
+/* Announcement toggles: grey when off, green when on */
+.button.toggle {
+    -fx-font-size: 16px;
+    -fx-padding: 5 12 5 12;
+}
+
+.button.toggle.on {
+    -fx-background-color: #2e7d32;
+    -fx-border-color: #1f5a23;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Darkened table behind windows like the menu or the last trick */
+.shield {
+    -fx-background-color: rgba(0, 0, 0, 0.4);
+}
+
+.menu-panel {
+    -fx-background-color: white;
+    -fx-border-color: #333333;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 10;
+    -fx-pref-width: 280;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 18, 0, 0, 6);
+}
+
+.button.menu-item {
+    -fx-font-size: 20px;
+    -fx-alignment: center-left;
+    -fx-padding: 10 16 10 16;
+}
+
+/* Settings: the chosen strength gets a thick green frame */
+.button.strength-choice {
+    -fx-alignment: center-left;
+    -fx-padding: 8 16 8 16;
+    -fx-border-width: 3;
+}
+
+.button.strength-choice.on {
+    -fx-background-color: #e6f4e7;
+    -fx-border-color: #2e7d32;
+    -fx-border-width: 5;
+}
+
+/* Rules window: chapters on the left, the chosen one highlighted */
+.button.rules-chapter {
+    -fx-font-size: 18px;
+    -fx-alignment: center-left;
+    -fx-padding: 8 14 8 14;
+    -fx-pref-width: 230;
+}
+
+.button.rules-chapter.on {
+    -fx-background-color: #2e7d32;
+    -fx-border-color: #1f5a23;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.rules-text {
+    -fx-font-size: 18px;
+    -fx-text-fill: #222222;
+    -fx-line-spacing: 2;
+}
+
+/* Panels in the middle of the table */
+.panel {
+    -fx-background-color: white;
+    -fx-border-color: #333333;
+    -fx-border-width: 3;
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-padding: 16 22 18 22;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 20, 0, 0, 6);
+}
+
+.panel-title {
+    -fx-font-size: 25px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #222222;
+}
+
+.panel-heading {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #222222;
+}
+
+.panel-text {
+    -fx-font-size: 19px;
+    -fx-text-fill: #222222;
+}
+
+.panel-note {
+    -fx-font-size: 16px;
+    -fx-text-fill: #555555;
+}
+
+.help-box {
+    -fx-background-color: #fff6cc;
+    -fx-border-color: #e0b000;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+    -fx-padding: 9 12 9 12;
+}
+
+.help-box .label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #3d3000;
+}
+
+.help-box .help-icon {
+    -fx-text-fill: white;
+}
+
+/* Game announcement */
+.game-button {
+    -fx-pref-width: 150;
+    -fx-pref-height: 82;
+    -fx-border-color: #555555;
+    -fx-border-width: 3;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 4;
+}
+
+.game-button.weak {
+    -fx-background-color: #f2f2f2;
+    -fx-border-color: #c4c4c4;
+}
+
+.game-name {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #222222;
+}
+
+.game-value {
+    -fx-font-size: 15px;
+    -fx-text-fill: #2d5a2d;
+}
+
+.game-button.weak .game-value {
+    -fx-text-fill: #a33333;
+}
+
+.null-symbol {
+    -fx-border-color: #444444;
+    -fx-border-width: 3;
+    -fx-border-radius: 14;
+    -fx-min-width: 28;
+    -fx-min-height: 28;
+    -fx-alignment: center;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+/* Result */
+.result-won,
+.result-lost {
+    -fx-font-size: 34px;
+    -fx-font-weight: bold;
+}
+
+.result-won {
+    -fx-text-fill: #2e7d32;
+}
+
+.result-lost {
+    -fx-text-fill: #c0392b;
+}

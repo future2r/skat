@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SpotBugs findings that are intentionally accepted. Keep this list short and justified. -->
+<FindBugsFilter>
+</FindBugsFilter>

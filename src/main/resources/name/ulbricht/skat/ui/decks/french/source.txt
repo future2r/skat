@@ -1,0 +1,4 @@
+Vector playing cards 1.3, rendered from the SVG files with Inkscape 1.4 at 500 x 750 pixels
+(the original 500 x 726 stretched to 2:3). Face cards use the "...2" variants with figures; the ace of
+spades is ace_of_spades2 (plain spade). The back is drawn for this project.
+Clubs = acorns, spades = leaves, hearts = hearts, diamonds = bells; jack = unter, queen = ober.
